@@ -1,48 +1,64 @@
 class User
-	attr_accessor :last_name, :first_name, :email, :zipcode, :address, :city, :state, :street, :number
+	attr_accessor :last_name, :first_name, :email, :zipcode, :city, :state, :street, :number
 	INVALID_ZIPCODE = 0 * 5
 
-	def initialize(attr_array)
-		@last_name 		= attr_array[:last_name].to_s
-		@first_name 	= attr_array[:first_name].to_s
-		@email 			= attr_array[:email_address].to_s
-		@zipcode		= clean_zip(attr_array[:zipcode])
-		@number  		= clean_number(attr_array[:homephone])
-		@address		= attr_array[:street].to_s	
-		@city 			= attr_array[:city].to_s
-		@state			= attr_array[:state].to_s
-	end
-
-	private
-
-	def clean_zip(number)
-		if number.nil?
-			fixed_numb = INVALID_ZIPCODE
-		elsif number.length < 5
-			fixed_numb = sprintf '%05d', number
-		else
-			fixed_numb = number
+	def initialize(attr_array = nil)
+		if attr_array
+			@last_name 		= attr_array[:last_name]
+			@first_name 	= attr_array[:first_name]
+			@email 			= attr_array[:email_address]
+			@zipcode		= Utility::Zipcode.clean(attr_array[:zipcode])
+			@number  		= attr_array[:homephone]
+			@street			= attr_array[:street]	
+			@city 			= attr_array[:city]
+			@state			= attr_array[:state]
 		end
-		return fixed_numb.to_s
 	end
 
-	def clean_number(number)
-		number = number.gsub(/\D/,"")
+	# def initialize(attr_array={})
+	# 	super
+	# end
 
-		if number.length == 10
-			## all good
-		elsif number.length == 11
-			number = number[1..-1]
-		else
-			number = "0000000000"
+	# def zipcode
+	# 	Utility::Zipcode.clean(@zipcode)
+	# 	# if number.nil?
+	# 	# 	fixed_numb = INVALID_ZIPCODE
+	# 	# elsif number.length < 5
+	# 	# 	fixed_numb = sprintf '%05d', number
+	# 	# else
+	# 	# 	fixed_numb = number
+	# 	# end
+	# 	# return fixed_numb.to_s
+	# end
+
+	def fields
+		@fields = %w(LAST\ NAME FIRST\ NAME EMAIL ZIPCODE CITY STATE CITY STREET)
+	end
+
+	# def first_name
+	# 	clean_name = name.downcase.Capitalize
+
+	# 	return clean_name
+	# end
+
+end
+
+module Utility
+
+	class Zipcode
+		def self.clean(dirty_zipcode)
+			dirty_zipcode.to_s.rjust(5,'0')
 		end
-		return number.to_s
 	end
 
-	def clean_name(name)
-		clean_name = name.downcase.Capitalize
+	class PhoneNumber
+		def initialize(phone_number)
+			@phone_number = phone_number.scan(/\d/)
+		end
 
-		return clean_name
+		def to_s
+			"(#{@phone_number[0..2]}) #{@phone_number[3.5]}-#{@phone_number[6..9]}"
+		end
 	end
 
 end

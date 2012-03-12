@@ -10,4 +10,9 @@ class Help
 		puts ""	
 	end
 
+	def commands
+		@fields = Array["load<filename>","help", "help <command>", "find", "queue", "queue count", "queue print", 
+						"queue print by <attribute>", "queue save to <filename.csv>", "file <attribute> <criteria>", "queue clear", "quit"]
+	end
+
 end

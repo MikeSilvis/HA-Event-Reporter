@@ -1,8 +1,10 @@
 require 'csv'
 require 'ap'
-load 'help.rb'
-load 'user.rb'
-load 'find_users.rb'
+
+$LOAD_PATH << './'
+require 'help'
+require 'user'
+require 'find_users'
 
 class EventReporter
 
@@ -10,18 +12,19 @@ class EventReporter
 		puts "EventReporter Initialized."
 		@help = Help.new
 		@find = FindUsers.new(filename)
+		@queue = Hash
 	end
 
 	def run
 		puts "Welcome to the Event Reporter Client!"
 		command = ""
-		while command != "q"
-			puts "Potential Commands: \t load<filename> \t help \t help <command> \t find \t queue count \t queue print \t queue printer by <attribute> \t queue save to <filename.csv> \t file <attribute> <criteria> \t queue clear \t q"
+		while command != "quit"
+			puts "Potential Commands: \t" + @help.commands.join("\t")
 			printf "Your command: "
 			input = gets.chomp.split(" ")
 			command = input[0]
 			case command
-				when 'q' 	then puts "Goodbye!"
+				when 'quit' then puts "Goodbye!"
 				when 'help' then @help.base
 				when 'load'	then load(input[1])
 				when 'find'
@@ -40,17 +43,18 @@ class EventReporter
 	end
 
 	def print
-		puts "Results: " + @queue.length.to_s 
-		puts "LAST NAME \t FIRST NAME \t EMAIL \t ZIPCODE \t CITY \t STATE \t ADDRESS"
+		puts "Results: " + @queue.length.to_s unless @queue.length == 0
+		puts User.new.fields.join("\t") unless @queue.length == 0
 		@queue.each do |user|
-			puts user.last_name + "\t" + user.first_name + "\t" + user.email + "\t" + user.zipcode + "\t" + user.city + "\t" + user.state + "\t" + user.address
+			puts array_for_printing_users(user).join("\t")
 		end
 		puts ""
 		puts ""
 	end
 
-	def queue
-		# Do stuff with Queue
+	def array_for_printing_users(user)
+		user_array = [user.last_name, user.first_name, user.email, user.zipcode, 
+					user.city, user.state, user.street]
 	end
 end
 
