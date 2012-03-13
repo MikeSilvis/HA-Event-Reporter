@@ -1,3 +1,6 @@
+$LOAD_PATH << './'
+require "print"
+
 class FindUsers
 
 	CSV_OPTIONS = {:headers => true, :header_converters => :symbol}
@@ -11,37 +14,44 @@ class FindUsers
 		if attribute.nil?
 			search_default
 		else
-			search_with_attributes(attribute, criteria)
+			search_with_attributes(attribute, criteria.join(" "))
 		end
+
+		Print.new(@user_array)
+
+		return @user_array
 	end
 
 	def search_with_attributes(attribute, criteria)
 		@user_array = []
-		return @user_array if !verify_attribute(attribute)
+		return @user_array if !verify_attribute?(attribute)
 
 		@all_users.each do |user|
-			@user_array << user if user.send(attribute) == criteria
+			@user_array << user if user.send(attribute) == Utility::Clean.titleize(criteria)
 		end
 
 		return @user_array
+
+		# return @user_array if !verify_attribute?(attribute)
+
+		# @user_array = @all_users.collect do |user|
+		# 	user if user.send(attribute) == criteria
+		# end 
+
+		# return @user_array
 	end
 
 	def search_default
-		@user_array = []
-		@all_users.each do |user|
-			@user_array << user
-		end	
-
-		return @user_array
+		@user_array = @all_users.collect do |user|
+			user
+		end
 	end
 
 	private
 
 	def load_all_users(file)
-		@all_users = []
-
-		file.each do |line|
-			@all_users << User.new(line)
+		@all_users = file.collect do |line|
+			User.new(line)
 		end
 	end
 
@@ -51,7 +61,7 @@ class FindUsers
 	 	end
 	end
 
-	def verify_attribute(attribute)
+	def verify_attribute?(attribute)
 		User.new.respond_to? attribute
 	end
 end
