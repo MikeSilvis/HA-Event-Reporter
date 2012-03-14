@@ -54,7 +54,7 @@ class Queue
 		if attribute[1]
 			return puts "Not a valid attribute" if !verify_attribute?(attribute[1])
 
-			user_array = @queue.sort_by { |attendee| attendee.send(attribute[1]) }
+			user_array = @queue.sort_by { |user| user.send(attribute[1]) }
 
 			Print.new(user_array)
 		end
