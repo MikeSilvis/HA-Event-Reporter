@@ -6,19 +6,20 @@ class Print
         self.queue = queue
 
         find_length_of_fields
-        print
+        print_count
+        print_fields
+        print_users
     end
-
-    def print
+    def print_count
         puts "Results: " + queue.length.to_s
+    end
+    def print_fields
         puts fields.join("\t")
-
+    end
+    def print_users
         queue.each do |user|
             puts array_for_printing_users(user).join("\t")
         end
-
-        puts ""
-        puts ""
     end
 
     def array_for_printing_users(user)
